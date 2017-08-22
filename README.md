@@ -53,8 +53,70 @@ select user();
     </tr>
 </table>
 
->> 取值范围如果加了unsigned，则最大值翻倍，如tinyint unsigned的取值范围为(0~256)。 int(m)里的m是表示SELECT查询结果集中的显示宽度，并不影响实际的取值范围，没有影响到显示的宽度，不知道这个m有什么用。
+> 取值范围如果加了unsigned，则最大值翻倍，如tinyint unsigned的取值范围为(0~256)。 int(m)里的m是表示SELECT查询结果集中的显示宽度，并不影响实际的取值范围，没有影响到显示的宽度，不知道这个m有什么用。
 
+#### 2、浮点型(float和double)
+<table>
+    <tr>
+        <td>MySQL数据类型</td>
+        <td>含义</td>
+    </tr>
+    <tr>
+        <td>float(m,d)</td>
+        <td>单精度浮点型    8位精度(4字节)     m总个数，d小数位</td>
+    </tr>
+    <tr>
+        <td>double(m,d)</td>
+        <td>双精度浮点型    16位精度(8字节)    m总个数，d小数位</td>
+    </tr>
+</table>
+
+> 设一个字段定义为float(5,3)，如果插入一个数123.45678,实际数据库里存的是123.457，但总个数还以实际为准，即6位。
+
+#### 3、定点数
+> 浮点型在数据库中存放的是近似值，而定点类型在数据库中存放的是精确值。 decimal(m,d) 参数m<65 是总个数，d<30且 d<m 是小数位。
+
+#### 4、字符串(char,varchar,_text)
+<table>
+    <tr>
+        <td>MySQL数据类型</td>
+        <td>含义</td>
+    </tr>
+    <tr>
+        <td>char(n)</td>
+        <td>固定长度，最多255个字符</td>
+    </tr>
+    <tr>
+        <td>varchar(n)</td>
+        <td>固定长度，最多65535个字符</td>
+    </tr>
+    <tr>
+        <td>tinytext</td>
+        <td>可变长度，最多255个字符</td>
+    </tr>
+    <tr>
+        <td>text</td>
+        <td>可变长度，最多65535个字符</td>
+    </tr>
+    <tr>
+        <td>mediumtext</td>
+        <td>可变长度，最多2的24次方-1个字符</td>
+    </tr>
+    <tr>
+        <td>longtext</td>
+        <td>可变长度，最多2的32次方-1个字符</td>
+    </tr>
+</table>
+
+### char和varchar：
+> 1.char(n) 若存入字符数小于n，则以空格补于其后，查询之时再将空格去掉。所以char类型存储的字符串末尾不能有空格，varchar不限于此。 
+> 2.char(n) 固定长度，char(4)不管是存入几个字符，都将占用4个字节，varchar是存入的实际字符数+1个字节（n<=255）或2个字节(n>255)，所以varchar(4),存入3个字符将占用4个字节。 
+> 3.char类型的字符串检索速度要比varchar类型的快。
+
+### varchar和text： 
+> 1.varchar可指定n，text不能指定，内部存储varchar是存入的实际字符数+1个字节（n<=255）或2个字节(n>255)，text是实际字符数+2个字节。 
+> 2.text类型不能有默认值。 
+> 3.varchar可直接创建索引，text创建索引要指定前多少个字符。varchar查询速度快于text,在都创建索引的情况下，text的索引似乎不起作用。
 
 ## 关键字与函数名称全部大写,数据库名称、表名称、字段名称全部小写
 ### 创建数据库 
