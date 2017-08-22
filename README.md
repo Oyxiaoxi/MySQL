@@ -118,6 +118,75 @@ select user();
 + 2.text类型不能有默认值。 
 + 3.varchar可直接创建索引，text创建索引要指定前多少个字符。varchar查询速度快于text,在都创建索引的情况下，text的索引似乎不起作用。
 
+
+### 5.二进制数据(_Blob)
+
++ 1._BLOB和_text存储方式不同，_TEXT以文本方式存储，英文存储区分大小写，而_Blob是以二进制方式存储，不分大小写。 
++ 2._BLOB存储的数据只能整体读出。 
++ 3._TEXT可以指定字符集，_BLO不用指定字符集。
+
+### 6.日期时间类型
+<table>
+    <tr>
+        <td>MySQL数据类型</td>
+        <td>含义</td>
+    </tr>
+    <tr>
+        <td>date</td>
+        <td>日期 '2008-12-2'</td>
+    </tr>
+    <tr>
+        <td>time</td>
+        <td>时间 '12:25:36'</td>
+    </tr>
+    <tr>
+        <td>datetime</td>
+        <td>日期时间 '2008-12-2 22:06:44'</td>
+    </tr>
+    <tr>
+        <td>timestamp</td>
+        <td>自动存储记录修改时间</td>
+    </tr>
+</table>
+
+> 若定义一个字段为timestamp，这个字段里的时间数据会随其他字段修改的时候自动刷新，所以这个数据类型的字段可以存放这条记录最后被修改的时间。
+
+### 数据类型的属性
+<table>
+    <tr>
+        <td>MySQL数据类型</td>
+        <td>含义</td>
+    </tr>
+    <tr>
+        <td>NULL</td>
+        <td>数据列可包含NULL值</td>
+    </tr>
+    <tr>
+        <td>NOT NULL</td>
+        <td>数据列不允许包含NULL值</td>
+    </tr>
+    <tr>
+        <td>DEFAULT</td>
+        <td>默认值</td>
+    </tr>
+    <tr>
+        <td>PRIMARY KEY</td>
+        <td>主键</td>
+    </tr>
+    <tr>
+        <td>AUTO_INCREMENT</td>
+        <td>自动递增，适用于整数类型</td>
+    </tr>
+    <tr>
+        <td>UNSIGNED</td>
+        <td>无符号</td>
+    </tr>
+    <tr>
+        <td>CHARACTER SET name</td>
+        <td>指定一个字符集</td>
+    </tr>
+</table>
+
 ## 关键字与函数名称全部大写,数据库名称、表名称、字段名称全部小写
 ### 创建数据库 
 ```mysql
@@ -181,8 +250,8 @@ CREATE TABLE userTable(
 ```
 
 ### 纪录值唯一 AUTO_INCREMENT,
-#### 1.自动编号，且必须与主键组合使用,默认情况下
-#### 2.起始值为1，每次的增量为1
++ 1.自动编号，且必须与主键组合使用,默认情况下
++ 2.起始值为1，每次的增量为1
 ```mysql
 CREATE TABLE userTableTwo(
   id SMALLINT UNSIGNED AUTO_INCREMENT,
@@ -193,10 +262,10 @@ ERROR:Incorrect table definition; there can be only one auto column and it must 
 ```
 
 ### PRIMARY KEY 主键约束
-#### 1.主键约束
-#### 2.每张数据表只能存在一个主键
-#### 3.主键保证记录的唯一性
-#### 4.主键自动NOT NULL
++ 1.主键约束
++ 2.每张数据表只能存在一个主键
++ 3.主键保证记录的唯一性
++ 4.主键自动NOT NULL
 ```mysql
 CREATE TABLE userTableTwo(
   id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -212,10 +281,10 @@ CREATE TABLE userTableThree(
 );
 ```
 ### UNIQUE KEY 主键唯一约束
-#### 1.唯一约束
-#### 2.唯一约束可以保证纪录的唯一性
-#### 3.唯一约束的字段可以为空值（null）
-#### 4.每张数据表可以存在多个唯一约束
++ 1.唯一约束
++ 2.唯一约束可以保证纪录的唯一性
++ 3.唯一约束的字段可以为空值（null）
++ 4.每张数据表可以存在多个唯一约束
 ```mysql
 CREATE TABLE userTableFour(
   id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -225,8 +294,8 @@ CREATE TABLE userTableFour(
 ```
 
 ### 默认约束
-#### 1.默认值
-#### 2.当插入纪录时，如有没有明确为字段赋值，刚自动赋予默认值。
++ 1.默认值
++ 2.当插入纪录时，如有没有明确为字段赋值，刚自动赋予默认值。
 ```mysql
 create table userTablefive(
   id smallint unsigned auto_increment primary key,
@@ -236,14 +305,14 @@ create table userTablefive(
 ```
 
 ### 约束
-#### 1.约束保证数据的完整性和一致性。
-#### 2.约束分为表级约束和列级约束。
-#### 3.约束类型包括：
-####   NOT NULL 非空约束
-####   PRIMART KEY 主键约束
-####   UNIQUE KEY 唯一约束
-####   DEFAULT 默认约束
-####   FOREIGN KEY 外键约束
++ 1.约束保证数据的完整性和一致性。
++ 2.约束分为表级约束和列级约束。
++ 3.约束类型包括：
+>   NOT NULL 非空约束
+>   PRIMART KEY 主键约束
+>   UNIQUE KEY 唯一约束
+>   DEFAULT 默认约束
+>   FOREIGN KEY 外键约束
 
 ### FOREIGN KEY 外键约束
 ```mysql
@@ -272,10 +341,10 @@ show indexes from provinces\G;
 ```
 
 ### 外键约束参照操作
-#### 1.CASCADE:从父表删除或更新且自动删除或更新子表中匹配的行
-#### 2.SET NULL:从父表删除或更新行，并设置子表中的外键列为NUll。如果使用该选项，必须保证子表列没有指定NOT NULL 
-#### 3.RESTRICT:拒绝对父表的删除或更新操作。
-#### 4.NOT ACTION:标准SQL的关键字，在MYSQL中与RESTRICT相同
++ 1.CASCADE:从父表删除或更新且自动删除或更新子表中匹配的行
++ 2.SET NULL:从父表删除或更新行，并设置子表中的外键列为NUll。如果使用该选项，必须保证子表列没有指定NOT NULL 
++ 3.RESTRICT:拒绝对父表的删除或更新操作。
++ 4.NOT ACTION:标准SQL的关键字，在MYSQL中与RESTRICT相同
 
 ```mysql
 CREATE TABLE users1( 
@@ -291,7 +360,7 @@ delete from provinces where id = 3; // 删除父表中为3的纪录值会同时�
 ## 多选择逻辑引擎外键约束。不定义物理外键。
 
 ### 表级约束与列级约束
-#### 1.对一个数据列建立的约束，叫列级约束
-#### 2.对多偿数据列建立的约束，叫表级约束
-#### 3.列级约束即可以在列定义时声明，也可以在列定义后声明。
-#### 4.表约约束只能在列定义后声明。
++ 1.对一个数据列建立的约束，叫列级约束
++ 2.对多偿数据列建立的约束，叫表级约束
++ 3.列级约束即可以在列定义时声明，也可以在列定义后声明。
++ 4.表约约束只能在列定义后声明。
