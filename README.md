@@ -24,6 +24,35 @@ prompt \u@\h \d>
 select user();
 ```
 
+### mysql 数据类型
+#### 1、整型
+<table>
+    <tr>
+        <td>MySQL数据类型</td>
+        <td>含义（有符号）</td>
+    </tr>
+    <tr>
+        <td>tinyint(m)</td>
+        <td>1个字节  范围(-128~127)</td>
+    </tr>
+    <tr>
+        <td>smallint(m)</td>
+        <td>2个字节  范围(-32768~32767)</td>
+    </tr>
+    <tr>
+        <td>mediumint(m)</td>
+        <td>3个字节  范围(-8388608~8388607)</td>
+    </tr>
+    <tr>
+        <td>int(m)</td>
+        <td>4个字节  范围(-2147483648~2147483647)</td>
+    </tr>
+    <tr>
+        <td>bigint(m)</td>
+        <td>8个字节  范围(+-9.22*10的18次方)</td>
+    </tr>
+</table>
+
 ## 关键字与函数名称全部大写,数据库名称、表名称、字段名称全部小写
 ### 创建数据库 
 ```mysql
