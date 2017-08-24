@@ -2,26 +2,18 @@
 
 #### MySQL是一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，目前属于 Oracle 旗下产品。MySQL 是最流行的关系型数据库管理系统之一，在 WEB 应用方面，MySQL是最好的 RDBMS (Relational Database Management System，关系数据库管理系统) 应用软件。
 
+
+###  MyCli 是一个 MySQL 命令行工具，支持自动补全和语法高亮。也可用于 MariaDB 和 Percona。
+```bash
+brew update && brew install mycli
+sudo mycli //输入管理员密码即可登陆 
+```
+
 ### MySQL服务
 ```bash
 mysql.server start
 mysql.server restart
 mysql.server stop
-```
-
-### 登陆数据库
-```bash
-mysql -u root -p
-```
-
-### 修改提示符：prompt \u@\h \d>   当前用户名\本地用户\ 当前使用表名。
-```mysql
-prompt \u@\h \d>
-```
-
-### 显示当前用户
-```mysql
-select user();
 ```
 
 ### mysql 数据类型
@@ -188,8 +180,30 @@ select user();
 </table>
 
 ## 关键字与函数名称全部大写,数据库名称、表名称、字段名称全部小写
+
+### 登陆数据库
+```bash
+prompt \u@\h \d> # 修改提示符：prompt \u@\h \d>   当前用户名\本地用户\ 当前使用表名。
+mysql -h 127.0.0.1 -u 用户名 -p
+mysql -D 所选择的数据库名 -h 主机名 -u 用户名 -p
+mysql> mysql -u root -p
+mysql> exit # 退出 使用 “quit;” 或 “\q;” 一样的效果
+mysql> status;  # 显示当前mysql的version的各种信息
+mysql> select version(); # 显示当前mysql的version信息
+mysql> show global variables like 'port'; # 查看MySQL端口号
+```
+
 ### 创建数据库 
 ```mysql
+-- 创建一个名为 samp_db 的数据库，数据库字符编码指定为 gbk
+create database samp_db character set gbk;
+drop database samp_db; -- 删除 库名为samp_db的库
+show databases;        -- 显示数据库列表。
+use samp_db;     -- 选择创建的数据库samp_db
+show tables;     -- 显示samp_db下面所有的表名字
+describe 表名;    -- 显示数据表的结构
+delete from 表名; -- 清空表中记录
+
 CREATE DATABASE tables;
 ```
 
@@ -203,8 +217,10 @@ SHOW CREATE DATABASE tables;
 DROP DATABASE tables;
 ```
 
-### 创建表
+### 创建数据库表
 ```mysql
+使用 create table 语句可完成对表的创建, create table 的常见形式:
+语法：create table 表名称(列声明);
 CREATA TABLE [IF NOT EXISTS] table_name{
   column_name data_type,
   ....
@@ -215,6 +231,19 @@ CREATE TABLE userInfo(
   age TINYINT UNSIGNED,
   salary FLOAT(8,2) UNSIGNED
 );
+
+CREATE TABLE `user_accounts` (
+  `id`             int(100) unsigned NOT NULL AUTO_INCREMENT primary key,
+  `password`       varchar(32)       NOT NULL DEFAULT '' COMMENT '用户密码',
+  `reset_password` tinyint(32)       NOT NULL DEFAULT 0 COMMENT '用户类型：0－不需要重置密码；1-需要重置密码',
+  `mobile`         varchar(20)       NOT NULL DEFAULT '' COMMENT '手机',
+  `create_at`      timestamp(6)      NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `update_at`      timestamp(6)      NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  -- 创建唯一索引，不允许重复
+  UNIQUE INDEX idx_user_mobile(`mobile`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8
+COMMENT='用户表信息';
 ```
 
 ### 查看表结构信息
@@ -364,3 +393,139 @@ delete from provinces where id = 3; // 删除父表中为3的纪录值会同时�
 + 2.对多偿数据列建立的约束，叫表级约束
 + 3.列级约束即可以在列定义时声明，也可以在列定义后声明。
 + 4.表约约束只能在列定义后声明。
+
+## 增删改查
+### SELECT
+> SELECT 语句用于从表中选取数据。 
+> 语法：SELECT 列名称 FROM 表名称 
+> 语法：SELECT * FROM 表名称
+```mysql
+-- 表 station 取个别名叫s，表 station 中不包含 字段id=13或者14 的，并且id不等于4的 查询出来，只显示id
+SELECT s.id from station s WHERE id in (13,14) and user_id not in (4);
+
+-- 从表 Persons 选取 LastName 列的数据
+SELECT LastName FROM Persons
+
+-- 结果集中会自动去重复数据
+SELECT DISTINCT Company FROM Orders 
+-- 表 Persons 字段 Id_P 等于 Orders 字段 Id_P 的值，
+-- 结果集显示 Persons表的 LastName、FirstName字段，Orders表的OrderNo字段
+SELECT p.LastName, p.FirstName, o.OrderNo FROM Persons p, Orders o WHERE p.Id_P = o.Id_P 
+
+-- gbk 和 utf8 中英文混合排序最简单的办法 
+-- ci是 case insensitive, 即 “大小写不敏感”
+SELECT tag, COUNT(tag) from news GROUP BY tag order by convert(tag using gbk) collate gbk_chinese_ci;
+SELECT tag, COUNT(tag) from news GROUP BY tag order by convert(tag using utf8) collate utf8_unicode_ci;
+```
+
+### UPDATE
+> Update 语句用于修改表中的数据。 
+> 语法：UPDATE 表名称 SET 列名称 = 新值 WHERE 列名称 = 某值
+```mysql
+-- update语句设置字段值为另一个结果取出来的字段
+update user set name = (select name from user1 where user1 .id = 1 )
+where id = (select id from user2 where user2 .name='小苏');
+-- 更新表 orders 中 id=1 的那一行数据更新它的 title 字段
+UPDATE `orders` set title='这里是标题' WHERE id=1;
+```
+
+### INSERT
+> INSERT INTO 语句用于向表格中插入新的行。
+> 语法：INSERT INTO 表名称 VALUES (值1, 值2,....) 
+> 语法：INSERT INTO 表名称 (列1, 列2,...) VALUES (值1, 值2,....) 
+
+```mysql
+-- 向表 Persons 插入一条字段 LastName = JSLite 字段 Address = shanghai
+INSERT INTO Persons (LastName, Address) VALUES ('JSLite', 'shanghai');
+-- 向表 meeting 插入 字段 a=1 和字段 b=2
+INSERT INTO meeting SET a=1,b=2;
+-- 
+-- SQL实现将一个表的数据插入到另外一个表的代码
+-- 如果只希望导入指定字段，可以用这种方法：
+-- INSERT INTO 目标表 (字段1, 字段2, ...) SELECT 字段1, 字段2, ... FROM 来源表;
+INSERT INTO orders (user_account_id, title) SELECT m.user_id, m.title FROM meeting m where m.id=1;
+```
+
+### DELETE
+> DELETE 语句用于删除表中的行。
+> 语法：DELETE FROM 表名称 WHERE 列名称 = 值
+```mysql
+
+-- 在不删除table_name表的情况下删除所有的行，清空表。
+DELETE FROM table_name
+-- 或者
+DELETE * FROM table_name
+-- 删除 Person表字段 LastName = 'JSLite' 
+DELETE FROM Person WHERE LastName = 'JSLite' 
+-- 删除 表meeting id 为2和3的两条数据
+DELETE from meeting where id in (2,3);
+```
+
+### WHERE
+> WHERE 子句用于规定选择的标准。 
+> 语法：SELECT 列名称 FROM 表名称 WHERE 列 运算符 值
+```mysql
+-- 从表 Persons 中选出 Year 字段大于 1965 的数据
+SELECT * FROM Persons WHERE Year>1965
+```
+
+### AND 和 OR
+> AND - 如果第一个条件和第二个条件都成立； 
+> OR - 如果第一个条件和第二个条件中只要有一个成立；
+
+```mysql
+-- 删除 meeting 表字段 
+-- id=2 并且 user_id=5 的数据  和
+-- id=3 并且 user_id=6 的数据 
+DELETE from meeting where id in (2,3) and user_id in (5,6);
+
+-- 使用 AND 来显示所有姓为 "Carter" 并且名为 "Thomas" 的人：
+SELECT * FROM Persons WHERE FirstName='Thomas' AND LastName='Carter';
+```
+
+```mysql
+-- 使用 OR 来显示所有姓为 "Carter" 或者名为 "Thomas" 的人：
+SELECT * FROM Persons WHERE firstname='Thomas' OR lastname='Carter'
+```
+
+### ORDER BY
+> 语句默认按照升序对记录进行排序。 
+> ORDER BY - 语句用于根据指定的列对结果集进行排序。 
+> DESC - 按照降序对记录进行排序。
+> ASC - 按照顺序对记录进行排序。
+
+```mysql
+-- Company在表Orders中为字母，则会以字母顺序显示公司名称
+SELECT Company, OrderNumber FROM Orders ORDER BY Company
+
+-- 后面跟上 DESC 则为降序显示
+SELECT Company, OrderNumber FROM Orders ORDER BY Company DESC
+
+-- Company以降序显示公司名称，并OrderNumber以顺序显示
+SELECT Company, OrderNumber FROM Orders ORDER BY Company DESC, OrderNumber ASC
+```
+
+### IN
+> IN - 操作符允许我们在 WHERE 子句中规定多个值。 
+> IN - 操作符用来指定范围，范围中的每一条，都进行匹配。IN取值规律，由逗号分割，全部放置括号中。 
+> 语法：SELECT "字段名"FROM "表格名"WHERE "字段名" IN ('值一', '值二', ...);
+```mysql
+-- 从表 Persons 选取 字段 LastName 等于 Adams、Carter
+SELECT * FROM Persons WHERE LastName IN ('Adams','Carter')
+```
+
+### NOT
+> UNION - 操作符用于合并两个或多个 SELECT 语句的结果集。
+```mysql
+-- 列出所有在中国表（Employees_China）和美国（Employees_USA）的不同的雇员名
+SELECT E_Name FROM Employees_China UNION SELECT E_Name FROM Employees_USA
+
+-- 列出 meeting 表中的 pic_url，
+-- station 表中的 number_station 别名设置成 pic_url 避免字段不一样报错
+-- 按更新时间排序
+SELECT id,pic_url FROM meeting UNION ALL SELECT id,number_station AS pic_url FROM station  ORDER BY update_at;
+```
+
+ 
+
+
