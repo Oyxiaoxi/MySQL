@@ -212,11 +212,6 @@ CREATE DATABASE tables;
 SHOW CREATE DATABASE tables;
 ```
 
-### 删除数据库
-```mysql
-DROP DATABASE tables;
-```
-
 ### 创建数据库表
 ```mysql
 使用 create table 语句可完成对表的创建, create table 的常见形式:
@@ -465,8 +460,6 @@ SELECT * FROM mytable WHEREt Name like'%admin'; -- 因此，在使用LIKE时应�
 >- 使用短索引
 >- 不要在列上进行运算 索引会失效 
 
-
-
 ## 增删改查
 ### SELECT
 > SELECT 语句用于从表中选取数据。 
@@ -683,6 +676,75 @@ DELIMITER ; -- 恢复结束符号
 > OLD和NEW不区分大小写
 >+ NEW 用NEW.col_name，没有旧行。在DELETE触发程序中，仅能使用OLD.col_name，没有新行。
 >+ OLD 用OLD.col_name来引用更新前的某一行的列
+
+## 创建后表的修改
+### 添加列
+> 语法：alter table 表名 add 列名 列数据类型 [after 插入位置];
+```mysql
+-- 在表students的最后追加列 address: 
+alter table students add address char(60);
+-- 在名为 age 的列后插入列 birthday: 
+alter table students add birthday date after age;
+-- 在名为 number_people 的列后插入列 weeks: 
+alter table students add column `weeks` varchar(5) not null default "" after `number_people`;
+```
+
+### 修改列
+> 语法：alter table 表名 change 列名称 列新名称 新数据类型;
+```mysql
+-- 将表 tel 列改名为 telphone: 
+alter table students change tel telphone char(13) default "-";
+-- 将 name 列的数据类型改为 char(16): 
+alter table students change name name char(16) not null;
+-- 修改 COMMENT 前面必须得有类型属性
+alter table students change name name char(16) COMMENT '这里是名字';
+-- 修改列属性的时候 建议使用modify,不需要重建表
+-- change用于修改列名字，这个需要重建表
+alter table meeting modify `weeks` varchar(20) NOT NULL DEFAULT "" COMMENT "开放日期 周一到周日：0~6，间隔用英文逗号隔开";
+```
+
+### 删除列
+> 语法：alter table 表名 drop 列名称;
+```mysql
+-- 删除表students中的 birthday 列: 
+alter table students drop birthday;
+```
+
+### 重命名表
+> 语法：alter table 表名 rename 新表名;
+```mysql
+-- 重命名 students 表为 workmates: 
+alter table students rename workmates;
+```
+
+### 清空表数据
+>+ 方法一：delete from 表名;
+>+ 方法二：truncate from "表名";
+>+ DELETE:1. DML语言;2. 可以回退;3. 可以有条件的删除;
+>+ TRUNCATE:1. DDL语言;2. 无法回退;3. 默认所有的表内容都删除;4. 删除速度比delete快。
+
+```mysql
+-- 清空表为 workmates 里面的数据，不删除表。 
+delete from workmates;
+-- 删除workmates表中的所有数据，且无法恢复
+truncate from workmates;
+```
+
+### 删除整张表
+> 语法：drop table 表名;
+```mysql
+-- 删除 workmates 表: 
+drop table workmates;
+```
+
+### 删除整个数据库
+> 语法：drop database 数据库名;
+```mysql
+-- 删除 samp_db 数据库: 
+drop database samp_db;
+```
+
+
 
 
 
