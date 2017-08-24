@@ -397,8 +397,8 @@ delete from provinces where id = 3; // 删除父表中为3的纪录值会同时�
 ## 增删改查
 ### SELECT
 > SELECT 语句用于从表中选取数据。 
-> 语法：SELECT 列名称 FROM 表名称 
-> 语法：SELECT * FROM 表名称
+>+ 语法：SELECT 列名称 FROM 表名称 
+>+ 语法：SELECT * FROM 表名称
 ```mysql
 -- 表 station 取个别名叫s，表 station 中不包含 字段id=13或者14 的，并且id不等于4的 查询出来，只显示id
 SELECT s.id from station s WHERE id in (13,14) and user_id not in (4);
@@ -420,7 +420,7 @@ SELECT tag, COUNT(tag) from news GROUP BY tag order by convert(tag using utf8) c
 
 ### UPDATE
 > Update 语句用于修改表中的数据。 
-> 语法：UPDATE 表名称 SET 列名称 = 新值 WHERE 列名称 = 某值
+>+ 语法：UPDATE 表名称 SET 列名称 = 新值 WHERE 列名称 = 某值
 ```mysql
 -- update语句设置字段值为另一个结果取出来的字段
 update user set name = (select name from user1 where user1 .id = 1 )
@@ -431,8 +431,8 @@ UPDATE `orders` set title='这里是标题' WHERE id=1;
 
 ### INSERT
 > INSERT INTO 语句用于向表格中插入新的行。
-> 语法：INSERT INTO 表名称 VALUES (值1, 值2,....) 
-> 语法：INSERT INTO 表名称 (列1, 列2,...) VALUES (值1, 值2,....) 
+>+ 语法：INSERT INTO 表名称 VALUES (值1, 值2,....) 
+>+ 语法：INSERT INTO 表名称 (列1, 列2,...) VALUES (值1, 值2,....) 
 
 ```mysql
 -- 向表 Persons 插入一条字段 LastName = JSLite 字段 Address = shanghai
@@ -448,7 +448,7 @@ INSERT INTO orders (user_account_id, title) SELECT m.user_id, m.title FROM meeti
 
 ### DELETE
 > DELETE 语句用于删除表中的行。
-> 语法：DELETE FROM 表名称 WHERE 列名称 = 值
+>+ 语法：DELETE FROM 表名称 WHERE 列名称 = 值
 ```mysql
 
 -- 在不删除table_name表的情况下删除所有的行，清空表。
@@ -463,15 +463,15 @@ DELETE from meeting where id in (2,3);
 
 ### WHERE
 > WHERE 子句用于规定选择的标准。 
-> 语法：SELECT 列名称 FROM 表名称 WHERE 列 运算符 值
+>+ 语法：SELECT 列名称 FROM 表名称 WHERE 列 运算符 值
 ```mysql
 -- 从表 Persons 中选出 Year 字段大于 1965 的数据
 SELECT * FROM Persons WHERE Year>1965
 ```
 
 ### AND 和 OR
-> AND - 如果第一个条件和第二个条件都成立； 
-> OR - 如果第一个条件和第二个条件中只要有一个成立；
+>+ AND - 如果第一个条件和第二个条件都成立； 
+>+ OR - 如果第一个条件和第二个条件中只要有一个成立；
 
 ```mysql
 -- 删除 meeting 表字段 
@@ -490,9 +490,9 @@ SELECT * FROM Persons WHERE firstname='Thomas' OR lastname='Carter'
 
 ### ORDER BY
 > 语句默认按照升序对记录进行排序。 
-> ORDER BY - 语句用于根据指定的列对结果集进行排序。 
-> DESC - 按照降序对记录进行排序。
-> ASC - 按照顺序对记录进行排序。
+>+ ORDER BY - 语句用于根据指定的列对结果集进行排序。 
+>+ DESC - 按照降序对记录进行排序。
+>+ ASC - 按照顺序对记录进行排序。
 
 ```mysql
 -- Company在表Orders中为字母，则会以字母顺序显示公司名称
@@ -508,7 +508,7 @@ SELECT Company, OrderNumber FROM Orders ORDER BY Company DESC, OrderNumber ASC
 ### IN
 > IN - 操作符允许我们在 WHERE 子句中规定多个值。 
 > IN - 操作符用来指定范围，范围中的每一条，都进行匹配。IN取值规律，由逗号分割，全部放置括号中。 
-> 语法：SELECT "字段名"FROM "表格名"WHERE "字段名" IN ('值一', '值二', ...);
+>+ 语法：SELECT "字段名"FROM "表格名"WHERE "字段名" IN ('值一', '值二', ...);
 ```mysql
 -- 从表 Persons 选取 字段 LastName 等于 Adams、Carter
 SELECT * FROM Persons WHERE LastName IN ('Adams','Carter')
