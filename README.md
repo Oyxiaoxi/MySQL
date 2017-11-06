@@ -744,7 +744,10 @@ drop table workmates;
 drop database samp_db;
 ```
 
-
+### 查询某字段一年内的数据
+```mysql
+SELECT `tell`,`hospital` FROM `crm`.`crm_order` WHERE hospital='7' and `state` IN (1,15) and `regdate` >=1477929600 and `regdate` <=1509932352 and `is_delete` =1;
+```
 
 
 
