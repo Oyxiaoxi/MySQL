@@ -749,6 +749,11 @@ drop database samp_db;
 SELECT `tell`,`hospital` FROM `crm`.`crm_order` WHERE hospital='7' and `state` IN (1,15) and `regdate` >=1477929600 and `regdate` <=1509932352 and `is_delete` =1;
 ```
 
+### 联表查询某些字段并格式化时间戳
+```mysql
+SELECT o.`name` ,`tell` ,`qq` ,`wechat` ,`address` , d.`name` as `department` , e.`name` as `disease` ,`ip` ,FROM_UNIXTIME(`dztime`,'%Y-%m-%d %H:%i:%s') as `dztime` ,FROM_UNIXTIME(`regdate`,'%Y-%m-%d %H:%i:%s') as `regdate` FROM `crm`.`crm_order` o left join `crm`.`crm_department` d on o.`department`=d.`id` left join `crm`.`crm_disease` e on o.`disease`=e.`id` WHERE o.`hospital`='4';
+```
+
 
 
 
